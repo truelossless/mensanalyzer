@@ -1,6 +1,9 @@
 # database
 mensa-server/eat.db
 
+#stupid stuff
+package-lock.json*
+
 # Logs
 logs
 *.log
