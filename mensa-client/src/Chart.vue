@@ -1,9 +1,9 @@
 <template>
   <div id="charts">
       <div id="chart-container">
-      <p>Prix moyen d'un plat</p>
+      <p>Prix moyen du plat principal</p>
       <canvas id="chart1"></canvas>
-      <p>Aliments principaux pour un plat</p>
+      <p>Aliments principaux pour un repas</p>
       <canvas id="chart2"></canvas>
       <p>Aliments les plus courants</p>
       <canvas id="chart3"></canvas>
@@ -25,7 +25,6 @@ export default {
   mounted() {
 
     axios.get('/api/menu/all').then((res) => {
-      console.log(res.data);
       this.meals = res.data.length;
 
     // clone the array
@@ -50,6 +49,24 @@ export default {
           }]
         },
         options: {
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                return tooltipItem.yLabel + '€';
+              },
+              title: function(tooltipItem, data) {
+                let i = tooltipItem[0].index;
+                let date = new Date(data.datasets[0].data[i].date * 1000);
+                
+                let day = ("0" + date.getDate()).slice(-2);
+                let month = ("0" + (date.getMonth() + 1)).slice(-2);
+                let year = date.getFullYear().toString().slice(-2);
+                let zone = date.getHours() === 12 ? 'midi' : 'soir';
+
+                return day + '/' + month + '/' + year + ', repas du ' + zone;
+              }
+            }
+          },
           legend: {
             display: false
           },
@@ -86,7 +103,6 @@ export default {
       typeData.forEach((el) => {
         el.types = el.types.split(',');
         el.types.forEach((type) => {
-          console.log(type);
           for(let i=0; i<typeLabels.length; i++) {
             if(typeLabels[i] === type) {
               typeDataset[i]++;
@@ -94,9 +110,6 @@ export default {
           }
         });
       });
-
-      console.log('dataset:');
-      console.log(typeDataset);
 
       new Chart('chart2', {
         type: 'pie',
@@ -170,6 +183,7 @@ export default {
                 break;
               case 'viande':
                 foodTypes.push('rgba(255, 45, 0, 0.2)');
+                break;
               default:
                 foodTypes.push('rgba(100, 100, 100, 0.2)');
             }
@@ -178,9 +192,29 @@ export default {
         });
       });
 
-      console.log(foodLabels);
-      console.log(foodTypes);
-      console.log(foodDataset);
+      // sort the shit outta this
+      let foodMap = foodLabels.map((el, i) => {
+        return {
+          label: el,
+          data: foodDataset[i],
+          type: foodTypes[i]
+        }
+      });
+
+      let sortedFoodMap = foodMap.sort((a, b) => {
+        // desc sort
+        return b - a;
+      });
+
+      foodLabels = [];
+      foodTypes = [];
+      foodDataset = [];
+
+      sortedFoodMap.forEach((el) => {
+        foodLabels.push(el.label);
+        foodTypes.push(el.type);
+        foodDataset.push(el.data);
+      });
 
       new Chart('chart3', {
         type: 'bar',

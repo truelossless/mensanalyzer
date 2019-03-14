@@ -12,8 +12,8 @@
       <div id="credits">
         <hr>
         <p>Créé par <a href="https://github.com/truelossless/">Esteban Gressard</a></p>
-        <p>Code disponible sous licence MIT sur <a href="https://github.com/truelossless/">Github</a></p>
-        <p>Propulsé fièrement avec  <a href="https://nodejs.org/en/">Node.js</a>, <a href="https://vuejs.org/">Vue</a>, <a href="https://www.chartjs.org/">Chart.js</a>, <a href="http://getskeleton.com/">Skeleton</a></p>
+        <p>Code disponible sous licence MIT sur <a href="https://github.com/truelossless/mensanalyzer/">Github</a></p>
+        <p>Propulsé fièrement par  <a href="https://nodejs.org/en/">Node.js</a>, <a href="https://vuejs.org/">Vue</a>, <a href="https://www.chartjs.org/">Chart.js</a>, <a href="http://getskeleton.com/">Skeleton</a></p>
       </div>
     </div>
   </div>

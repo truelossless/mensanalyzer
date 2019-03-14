@@ -4,7 +4,7 @@
         <p>Contenu du repas</p>
         <div v-for="(food, index) in foods" :key="food.id">
             <span class="autocomplete">
-                <input :style="redOutlines(food)" @input="complete = index" v-model="food.name" class="entry" type="text" />
+                <input :style="redOutlines(food)" @keypress="complete = index" v-model="food.name" class="entry" type="text" />
                 <div v-if="complete == index" class="autocomplete-items">
                     <div @click="food.name = data.name" class="autocomplete-item" v-for="data in filteredApiFood(food)" :key="data.id">{{ data.name }}</div>
                 </div>
@@ -41,8 +41,8 @@ export default {
             newEntry: {name: '', price: 0, type: 'légumes'},
             complete: -1,
             validateMeal: 'Envoyer le repas',
-            validateNewFood: 'Enregistrer le nouvel ingrédient'
-
+            validateNewFood: 'Enregistrer le nouvel ingrédient',
+            submitDate: new Date()
         }
     },
     created () {
@@ -59,7 +59,7 @@ export default {
                 day = this.days[date.getDay()-1];
             }
 
-            if(date.getHours() > 18 || date.getHours() < 11) {
+            if(date.getHours() >= 18 || date.getHours() < 11) {
                 zone = 'soir'
             } else {
                 zone = 'midi'
@@ -116,10 +116,24 @@ export default {
 
             this.validateMeal = 'Envoi en cours ...';
 
+            let date = new Date();
+            if(date.getHours() >= 18 || date.getHours() < 11) {
+                // night
+                date.setHours(19);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            } else {
+                date.setHours(12);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            }
+
             axios.post('/api/menu/submit', {
                 foods: this.foods,
-                date: Math.floor(Date.now() / 1000)
-            }).then((res) => {
+                date: Math.floor(date.getTime() / 1000)
+            }).then(() => {
                 this.validateMeal = 'Repas envoyé !'
             });
         },
@@ -130,7 +144,7 @@ export default {
                 name: this.newEntry.name,
                 price: this.newEntry.price,
                 type: this.newEntry.type
-            }).then((res) => {
+            }).then(() => {
                 this.validateNewFood = 'Nouvel ingrédient enregistré !';
                 this.getApiFood();
             });
@@ -138,7 +152,7 @@ export default {
         getApiFood() {
             axios.get('/api/food/all').then((res) => {
                 this.apiFood = res.data;
-            }).catch((err) => {
+            }).catch(() => {
                 alert('Error: could not query the server');
             });
         }
