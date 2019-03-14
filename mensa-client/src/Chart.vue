@@ -203,7 +203,7 @@ export default {
 
       let sortedFoodMap = foodMap.sort((a, b) => {
         // desc sort
-        return b - a;
+        return b.data - a.data;
       });
 
       foodLabels = [];

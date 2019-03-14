@@ -85,7 +85,6 @@ export default {
         filteredApiFood(food) {
             let res = [];
             this.apiFood.forEach((el) => {
-                console.log(el.name);
                 if(el.name.indexOf(food.name) !== -1) {
                     res.push(el);
                 }
