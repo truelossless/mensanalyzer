@@ -1,3 +1,6 @@
+# database
+mensa-server/eat.db
+
 # Logs
 logs
 *.log
